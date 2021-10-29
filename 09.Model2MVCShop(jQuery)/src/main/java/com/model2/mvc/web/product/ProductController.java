@@ -69,13 +69,23 @@ public class ProductController {
 		//Business Logic
 		
 		product.setFileName(file.getOriginalFilename());
+		
+		Product prod = productService.getProduct(product.getProdNo());
+		System.out.println("pppppp"+prod);
+		
+		if(prod !=null) {
+		System.out.println("들어오나?");
+			int amount = prod.getAmount() + product.getAmount();
+		
+		product.setAmount(amount);}
+		
 		ModelAndView modelAndView = new ModelAndView();
 	
 		
 		System.out.println("======================================================================");
 		
 			
-			String temDir = "C:\\Users\\홍\\git\\07MNP\\07.Model2MVCShop(URI,pattern)\\src\\main\\webapp\\images\\uploadFiles"; 
+			String temDir = "C:\\Users\\AIA\\git\\07MNP\\07.Model2MVCShop(URI,pattern)\\src\\main\\webapp\\images\\uploadFiles"; 
 		
 				
 			
@@ -175,7 +185,7 @@ public class ProductController {
 		Product product = productService.getProduct(prodNo);
 		// Model 과 View 연결
 		
-	
+	System.out.println("produdduduududududu"+product);
 		
 		
 		Cookie[] cook = request.getCookies();
@@ -205,9 +215,10 @@ public class ProductController {
 		ModelAndView modelAndView = new ModelAndView();
 	
 		modelAndView.addObject("product", product);
-		modelAndView.addObject("menu",request.getParameter("menu"));
+	
 		modelAndView.setViewName("forward:/product/getProduct.jsp");
 		modelAndView.addObject("Cookie",cookiee);
+	
 		return modelAndView;
 	}
 	
@@ -224,6 +235,23 @@ public class ProductController {
 		modelAndView.setViewName("forward:/product/updateProductView.jsp");
 		return modelAndView;
 	}
+	
+//	@RequestMapping(value="updateAmount",method=RequestMethod.POST)
+//	public ModelAndView updateAmount( @ModelAttribute("product") Product product , Model model , HttpSession session) throws Exception{
+//
+//		System.out.println("/updateProduct : post");
+//		//Business Logic
+//		
+//		int amount = (productService.getProduct(product.getProdNo())).getAmount() - product.getAmount();
+//		product.setAmount(amount);
+//		productService.updateAmount(product);
+//		ModelAndView modelAndView = new ModelAndView();
+//		modelAndView.setViewName("redirect:/product/getProduct?prodNo="+ product.getProdNo()+"&menu=manage");
+//		
+//		
+//		
+//		return modelAndView;
+//	}
 	
 	//@RequestMapping("/updateProduct.do")
 	@RequestMapping(value="updateProduct",method=RequestMethod.POST)
@@ -259,6 +287,7 @@ public class ProductController {
 		System.out.println("서치는" +search);
 		// Model 과 View 연결
 		model.addAttribute("list", map.get("list"));
+		System.out.println(map.get("list"));
 		model.addAttribute("resultPage", resultPage);
 		model.addAttribute("search", search);
 		model.addAttribute("menu",request.getParameter("menu"));
@@ -267,6 +296,36 @@ public class ProductController {
 		return "forward:/product/listProduct.jsp";
 
 	}
+	
+	@RequestMapping(value="listProductManage")
+	public String listProductMangage( @ModelAttribute("search") Search search , Model model , HttpServletRequest request ) throws Exception{
+		
+		System.out.println("/listProductMange");
+		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		search.setPageSize(pageSize);
+		
+		// Business logic 수행
+		Map<String , Object> map=productService.getProductManageList(search);
+		
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
+		System.out.println("서치는" +search);
+		// Model 과 View 연결
+		model.addAttribute("list", map.get("list"));
+		System.out.println(map.get("list"));
+		model.addAttribute("resultPage", resultPage);
+		model.addAttribute("search", search);
+	
+		model.addAttribute("proTranCode","000");
+		
+		return "forward:/product/listProductManage.jsp";
+
+	}
+	
+	
 	
 	
 }

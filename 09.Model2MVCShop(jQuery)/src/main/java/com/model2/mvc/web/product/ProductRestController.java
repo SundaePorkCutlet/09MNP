@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
-import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.domain.Product;
 import com.model2.mvc.service.product.ProductService;
 
@@ -43,11 +44,13 @@ public class ProductRestController {
 	
 	@RequestMapping( value="json/addProduct", method=RequestMethod.POST )
 	public Product addProduct(	@RequestBody Product product,
+								@RequestParam("fileName1") MultipartFile file,
 									HttpSession session ) throws Exception{
 	
 		System.out.println("/product/json/addProduct : POST");
 		//Business Logic
 		System.out.println("::"+product);
+		product.setFileName(file.toString());
 		productService.addProduct(product);
 		
 		
